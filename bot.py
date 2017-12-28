@@ -23,6 +23,12 @@ def webhook():
     return "!", 200
 
 
+@server.route("/test")
+def test():
+    bot.send_message(os.environ.get('ADMIN'), 'Hello')
+    return "!", 200
+
+
 @bot.message_handler(commands=['start'])
 def command_start(message):
     bot.send_message(message.chat.id, string_values.hello.format(message.from_user.first_name))

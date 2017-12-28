@@ -23,9 +23,11 @@ def webhook():
     return "!", 200
 
 
-@server.route("/test")
-def test():
-    bot.send_message(os.environ.get('ADMIN'), 'Hello')
+@server.route("/send_hello")
+def send_hello():
+    users = users_db.get_users()
+    for user in users:
+        bot.send_message(user['user_id'], string_values.send_hello.format(user['first_name']))
     return "!", 200
 
 

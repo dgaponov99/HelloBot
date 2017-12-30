@@ -2,8 +2,7 @@ import telebot
 import os
 from flask import Flask, request
 
-import users_db
-from res import string_values
+import bot_functions
 
 bot = telebot.TeleBot(os.environ.get('TOKEN'))
 
@@ -23,26 +22,15 @@ def webhook():
     return "!", 200
 
 
-@server.route("/send_hello")
-def send_hello():
-    users = users_db.get_users()
-    for user in users:
-        bot.send_message(user['user_id'], string_values.send_hello.format(user['first_name']))
-    return "!", 200
-
-
 @bot.message_handler(commands=['start'])
 def command_start(message):
-    bot.send_message(message.chat.id, string_values.hello.format(message.from_user.first_name))
-    result = users_db.add_user(message.chat.id, message.from_user.first_name)
-    if result:
-        bot.send_message(os.environ.get('ADMIN'),
-                         string_values.new_user.format(message.from_user.first_name, message.chat.id))
+    bot_functions.greeting(message)
+    bot_functions.adding(message)
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def text_message(message):
-    bot.send_message(message.chat.id, string_values.reply_hello)
+    bot_functions.reply_text(message)
 
 
 server.run(host="0.0.0.0", port=int(os.environ.get('PORT')))
